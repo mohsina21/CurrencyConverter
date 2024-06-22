@@ -1,12 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -16,82 +8,49 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
+import { currencyByRupee } from './constant';
+import CurrencyBtn from './components/CurrencyBtn';
+import Snackbar from 'react-native-snackbar';
+import { number } from 'yup';
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [inputVlue, setinputVlue] = useState('');
+  const [resultvalue,setresultvalue]= useState('');
+  const [targetCurrency, setargetCurrency] =useState('');
+  const buttonPressed = (targetValue: Currency) => {
+    if (!inputVlue){
+      return Snackbar.show({
+        text: "Enter a value to convert:",
+        backgroundColor: "#EA7773",
+        textColor: "000000"
+      })
+    }
+    const inputAmount = parseFloat(inputVlue)
+    if (!isNaN(inputAmount)){
+    const convertedVlue = inputAmount * targetValue.value;
+    const result  = `${targetValue} ${convertedVlue.toFixed(2)} `
+     setresultvalue(result)
+     setargetCurrency(targetValue.name)
+    
+      
+     }
+     else{
+      return Snackbar.show({
+        text: "not a valid value",
+        backgroundColor: "#EA7773",
+        textColor: "000000"
+      })
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+     }
+    }
+  }
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView >
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+       
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+      <View>
+        <Text></Text>
+      </View>
     </SafeAreaView>
   );
 }
