@@ -1,76 +1,132 @@
 import React, { useState } from 'react';
 import {
+  FlatList,
+  Pressable,
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
+  TextInput,
   View,
 } from 'react-native';
 import { currencyByRupee } from './constant';
 import CurrencyBtn from './components/CurrencyBtn';
 import Snackbar from 'react-native-snackbar';
-import { number } from 'yup';
-function App(): React.JSX.Element {
-  const [inputVlue, setinputVlue] = useState('');
-  const [resultvalue,setresultvalue]= useState('');
-  const [targetCurrency, setargetCurrency] =useState('');
+
+function App(): JSX.Element {
+  const [inputValue, setInputValue] = useState('');
+  const [resultValue, setResultValue] = useState('');
+  const [targetCurrency, setTargetCurrency] = useState('');
+
   const buttonPressed = (targetValue: Currency) => {
-    if (!inputVlue){
+    if (!inputValue) {
       return Snackbar.show({
         text: "Enter a value to convert:",
         backgroundColor: "#EA7773",
-        textColor: "000000"
-      })
+        textColor: "#000000"
+      });
     }
-    const inputAmount = parseFloat(inputVlue)
-    if (!isNaN(inputAmount)){
-    const convertedVlue = inputAmount * targetValue.value;
-    const result  = `${targetValue} ${convertedVlue.toFixed(2)} `
-     setresultvalue(result)
-     setargetCurrency(targetValue.name)
-    
-      
-     }
-     else{
-      return Snackbar.show({
-        text: "not a valid value",
-        backgroundColor: "#EA7773",
-        textColor: "000000"
-      })
 
-     }
+    const inputAmount = parseFloat(inputValue);
+    if (!isNaN(inputAmount)) {
+      const convertedValue = inputAmount * targetValue.value;
+      const result = `${targetValue.name} ${convertedValue.toFixed(2)}`;
+      setResultValue(result);
+      setTargetCurrency(targetValue.name);
+    } else {
+      return Snackbar.show({
+        text: "Not a valid value",
+        backgroundColor: "#EA7773",
+        textColor: "#000000"
+      });
     }
   }
+
   return (
-    <SafeAreaView >
-      <StatusBar
-       
-      />
-      <View>
-        <Text></Text>
+    <SafeAreaView>
+      <StatusBar />
+      <View style={styles.container}>
+        <View style={styles.topContainer}>
+          <View style={styles.rupeeContainer}>
+            <Text style={styles.rupee}> ₹</Text>
+            <TextInput
+              maxLength={14}
+              value={inputValue}
+              clearButtonMode='always'
+              onChangeText={setInputValue}
+              keyboardType='number-pad'
+              placeholder='Enter Amount In Rupee'
+              style={styles.input}
+            />
+          </View>
+          {resultValue && (
+            <Text style={styles.resultTxt}>
+              {resultValue}
+            </Text>
+          )}
+        </View>
+        <View style={styles.bottomContainer}>
+          <FlatList
+            numColumns={3}
+            data={currencyByRupee}
+            keyExtractor={item => item.name}
+            renderItem={({ item }) => (
+              <Pressable
+                style={[styles.btn, targetCurrency === item.name && styles.selected]}
+                onPress={() => buttonPressed(item)}
+              >
+                <CurrencyBtn {...item} />
+              </Pressable>
+            )}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
+  container: {
+    flex: 1,
     marginTop: 32,
     paddingHorizontal: 24,
   },
-  sectionTitle: {
+  topContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rupeeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  rupee: {
     fontSize: 24,
-    fontWeight: '600',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  input: {
+    borderBottomWidth: 1,
+    marginLeft: 10,
+    flex: 1,
   },
-  highlight: {
-    fontWeight: '700',
+  resultTxt: {
+    fontSize: 20,
+    marginVertical: 20,
+  },
+  bottomContainer: {
+    flex: 2,
+  },
+  btn: {
+    flex: 1,
+    margin: 10,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+  selected: {
+    backgroundColor: '#DDD',
   },
 });
 
